@@ -20,8 +20,8 @@ dependencies {
 }
 
 publish {
-    userOrg = 'emilsjolander'
-    groupId = 'se.emilsjolander'
+    userOrg = 'lisb'
+    groupId = 'com.lisb'
     artifactId = 'intentbuilder-api'
     version = VERSION
     description = 'Generate type safe code for building intents.'
