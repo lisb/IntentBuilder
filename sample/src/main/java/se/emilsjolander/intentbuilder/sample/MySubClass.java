@@ -15,6 +15,9 @@ public class MySubClass extends MySuperClass {
     @Extra @Nullable
     String four;
 
+    @Extra
+    int five;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

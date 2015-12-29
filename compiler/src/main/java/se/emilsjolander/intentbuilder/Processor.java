@@ -146,17 +146,31 @@ public class Processor extends AbstractProcessor {
                 .addParameter(Intent.class, "intent")
                 .addParameter(TypeName.get(annotatedElement.asType()), "activity")
                 .addStatement("$T extras = intent.getExtras()", Bundle.class);
-        for (Element e : all) {
+        for (Element e : required) {
+            String paramName = getParamName(e);
+            injectMethod.addStatement("activity.$N = ($T) extras.get($S)", e.getSimpleName().toString(), e.asType(), paramName);
+        }
+        for (Element e : optional) {
             String paramName = getParamName(e);
             injectMethod.beginControlFlow("if (extras.containsKey($S))", paramName)
-                .addStatement("activity.$N = ($T) extras.get($S)", e.getSimpleName().toString(), e.asType(), paramName)
-                .nextControlFlow("else")
-                .addStatement("activity.$N = null", e.getSimpleName().toString())
-                .endControlFlow();
+                    .addStatement("activity.$N = ($T) extras.get($S)", e.getSimpleName().toString(), e.asType(), paramName)
+                    .nextControlFlow("else")
+                    .addStatement("activity.$N = null", e.getSimpleName().toString())
+                    .endControlFlow();
         }
         builder.addMethod(injectMethod.build());
-
-        for (Element e : all) {
+        for (Element e : required) {
+            String paramName = e.getSimpleName().toString();
+            MethodSpec.Builder getterMethod = MethodSpec
+                    .methodBuilder("get" + paramName.substring(0, 1).toUpperCase() + paramName.substring(1))
+                    .returns(ClassName.get(e.asType()))
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .addParameter(Intent.class, "intent")
+                    .addStatement("$T extras = intent.getExtras()", Bundle.class)
+                    .addStatement("return ($T) extras.get($S)", e.asType(), paramName);
+            builder.addMethod(getterMethod.build());
+        }
+        for (Element e : optional) {
             String paramName = e.getSimpleName().toString();
             MethodSpec.Builder getterMethod = MethodSpec
                     .methodBuilder("get" + paramName.substring(0, 1).toUpperCase() + paramName.substring(1))
