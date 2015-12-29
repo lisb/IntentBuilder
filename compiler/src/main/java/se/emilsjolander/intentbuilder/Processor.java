@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -145,6 +146,7 @@ public class Processor extends AbstractProcessor {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .addParameter(Intent.class, "intent")
                 .addParameter(TypeName.get(annotatedElement.asType()), "activity")
+                .addAnnotation(getSuppressWarningUnchecked())
                 .addStatement("$T extras = intent.getExtras()", Bundle.class);
         for (Element e : required) {
             String paramName = getParamName(e);
@@ -166,6 +168,7 @@ public class Processor extends AbstractProcessor {
                     .returns(ClassName.get(e.asType()))
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(Intent.class, "intent")
+                    .addAnnotation(getSuppressWarningUnchecked())
                     .addStatement("$T extras = intent.getExtras()", Bundle.class)
                     .addStatement("return ($T) extras.get($S)", e.asType(), paramName);
             builder.addMethod(getterMethod.build());
@@ -177,6 +180,7 @@ public class Processor extends AbstractProcessor {
                     .returns(ClassName.get(e.asType()))
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .addParameter(Intent.class, "intent")
+                    .addAnnotation(getSuppressWarningUnchecked())
                     .addStatement("$T extras = intent.getExtras()", Bundle.class)
                     .beginControlFlow("if (extras.containsKey($S))", paramName)
                     .addStatement("return ($T) extras.get($S)", e.asType(), paramName)
@@ -187,6 +191,10 @@ public class Processor extends AbstractProcessor {
         }
 
         return builder.build();
+    }
+
+    private AnnotationSpec getSuppressWarningUnchecked() {
+        return AnnotationSpec.builder(SuppressWarnings.class).addMember("value", "$S", "unchecked").build();
     }
 
     private String getParamName(Element e) {

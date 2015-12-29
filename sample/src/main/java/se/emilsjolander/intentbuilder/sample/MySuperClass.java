@@ -3,6 +3,8 @@ package se.emilsjolander.intentbuilder.sample;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 import se.emilsjolander.intentbuilder.Extra;
 
 public class MySuperClass extends AppCompatActivity {

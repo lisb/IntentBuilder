@@ -3,6 +3,8 @@ package se.emilsjolander.intentbuilder.sample;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
+
 import se.emilsjolander.intentbuilder.Extra;
 import se.emilsjolander.intentbuilder.IntentBuilder;
 
@@ -17,6 +19,9 @@ public class MySubClass extends MySuperClass {
 
     @Extra
     int five;
+
+    @Extra
+    ArrayList<String> six;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
